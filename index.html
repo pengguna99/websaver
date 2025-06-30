@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerbang Arsip - Personal Web Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk ikon-ikon keren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Mengatur font dan warna dasar */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #0a0a20, #1a1a30, #0a0a20); /* Gradien gelap yang halus */
+            background-size: 400% 400%;
+            animation: gradientShiftBg 20s ease infinite; /* Animasi gradien latar belakang */
+            display: flex;
+            justify-content: center; /* Pusatkan app-container secara horizontal */
+            align-items: flex-start; /* Pusatkan app-container ke atas, agar konten bisa scroll */
+            min-height: 100vh; /* Pastikan body setidaknya setinggi viewport */
+            color: #e0e0e0; /* Warna teks terang */
+            position: relative;
+            padding: 20px; /* Padding agar konten tidak terlalu mepet tepi layar */
+            box-sizing: border-box; /* Pastikan padding tidak menambah lebar/tinggi */
+            overflow-y: auto; /* Izinkan scroll vertikal pada body */
+        }
+
+        /* Animasi pergeseran gradien latar belakang */
+        @keyframes gradientShiftBg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Container utama aplikasi */
+        .app-container {
+            background-color: rgba(18, 18, 30, 0.95); /* Latar belakang semi-transparan */
+            border: 1px solid rgba(50, 50, 70, 0.7); /* Border yang samar */
+            border-radius: 1.5rem; /* Sudut sangat membulat */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(40, 40, 60, 0.3); /* Bayangan dan inset */
+            padding: 2.5rem;
+            width: 95%;
+            max-width: 900px; /* Batas lebar */
+            box-sizing: border-box;
+            position: relative;
+            z-index: 10;
+            opacity: 0; /* Mulai dengan transparan */
+            transform: translateY(20px);
+            animation: fadeInScale 0.8s ease-out forwards; /* Animasi masuk */
+            min-height: 80vh; /* Minimum height for better visual (can grow) */
+            display: flex; /* Menggunakan flexbox untuk konten di dalamnya */
+            flex-direction: column; /* Konten bertumpuk secara vertikal */
+        }
+
+        /* Animasi masuk untuk app container */
+        @keyframes fadeInScale {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Gaya umum untuk judul */
+        h1, h2 {
+            text-align: center;
+            color: #6a9aff; /* Warna biru-ungu cerah */
+            margin-bottom: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-shadow: 0 0 15px rgba(106, 154, 255, 0.5); /* Bayangan teks bercahaya */
+        }
+
+        /* Formulir input */
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        select { /* Tambahkan select */
+            width: 100%;
+            padding: 0.9rem 1.2rem; /* Padding atas bawah disesuaikan */
+            margin-bottom: 1.25rem;
+            border: 1px solid #4a506a; /* Border abu-abu kebiruan */
+            border-radius: 0.75rem; /* Sudut membulat */
+            background-color: #2a2a40; /* Latar belakang input gelap */
+            color: #e0e0e0;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box; /* Pastikan padding masuk ke dalam width */
+        }
+        /* Penyesuaian khusus untuk elemen select */
+        select {
+            appearance: none; /* Hapus default style untuk select */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e0e0e0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); /* Panah dropdown kustom */
+            background-repeat: no-repeat;
+            background-position: right 1rem center; /* Sesuaikan posisi panah */
+            background-size: 1.2em;
+            padding-right: 2.5rem; /* Tambahkan padding di kanan untuk panah */
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        textarea:focus,
+        select:focus { /* Tambahkan select */
+            border-color: #6a9aff; /* Border biru-ungu saat fokus */
+            box-shadow: 0 0 0 3px rgba(106, 154, 255, 0.3); /* Ring fokus bercahaya */
+        }
+
+        /* Tombol */
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-shrink: 0; /* Mencegah tombol menyusut pada flex container */
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #6a9aff, #9e7aff); /* Gradien untuk tombol utama */
+            color: white;
+            box-shadow: 0 5px 15px rgba(106, 154, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 154, 255, 0.6);
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background-color: #3a3a50; /* Tombol sekunder gelap */
+            color: #b0b0c0;
+            border: 1px solid #4a506a;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4a4a60;
+            color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: #ef4444; /* Merah untuk hapus/logout */
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+        }
+        /* Tampilan autentikasi (Login/Register) */
+        .auth-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1; /* Biarkan auth-view mengambil ruang yang tersedia */
+            justify-content: center; /* Pusatkan form login/register secara vertikal di dalam auth-view */
+        }
+
+        .auth-form {
+            width: 100%;
+            max-width: 400px;
+            background-color: #1f1f3a;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(50, 50, 70, 0.2);
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-toggle {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: #b0b0c0;
+        }
+
+        .auth-toggle a {
+            color: #6a9aff;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .auth-toggle a:hover {
+            color: #9e7aff;
+            text-decoration: underline;
+        }
+
+        /* Tampilan Dashboard */
+        .dashboard-view {
+            display: none; /* Disembunyikan secara default */
+            flex-direction: column;
+            flex-grow: 1; /* Biarkan dashboard-view mengambil ruang yang tersedia */
+        }
+        .dashboard-view.active {
+            display: flex;
+        }
+
+        .dashboard-header {
+            display: flex;
+            flex-direction: column; /* Stack items vertically on mobile */
+            align-items: flex-start; /* Align text to left */
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(50, 50, 70, 0.5);
+            gap: 1rem; /* Jarak antar item di header */
+        }
+
+        .dashboard-header .btn { /* Tombol logout di header */
+            align-self: flex-end; /* Align button to the right */
+            margin-top: 1rem; /* Add margin on mobile */
+        }
+
+        @media (min-width: 640px) { /* Untuk tampilan tablet dan desktop */
+            .dashboard-header {
+                flex-direction: row; /* Kembali ke layout baris */
+                justify-content: space-between;
+                align-items: center;
+            }
+            .dashboard-header .btn {
+                margin-top: 0; /* Hapus margin di desktop */
+            }
+        }
+
+        .user-info {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #90d4f4; /* Biru muda */
+        }
+        /* Tidak perlu user-info:first-child width 100% lagi karena flex-direction column */
+
+
+        /* Formulir penambahan website baru */
+        .add-website-form {
+            background-color: #1f1f3a;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        /* Filter dan Pencarian */
+        .filter-search-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center; /* Pusatkan kontrol */
+        }
+        .filter-search-controls > div {
+            flex: 1 1 auto; /* Izinkan item tumbuh dan menyusut, namun tidak kurang dari content */
+            min-width: 280px; /* Minimal lebar sebelum wrapping */
+            max-width: 100%; /* Pastikan tidak melebihi lebar induk */
+        }
+        /* Override default input/select width for these controls */
+        .filter-search-controls input,
+        .filter-search-controls select {
+            margin-bottom: 0;
+        }
+
+
+        /* Daftar website (Grid diganti Flex) */
+        .website-list {
+            display: flex; /* Menggunakan flexbox */
+            flex-wrap: wrap; /* Izinkan item membungkus ke baris baru */
+            justify-content: center; /* Pusatkan item secara horizontal */
+            margin: -0.75rem; /* Offset margin agar jarak antar item konsisten */
+        }
+
+        .website-item {
+            background-color: #2a2a40;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden; /* Untuk efek glow */
+            border: 1px solid rgba(50, 50, 70, 0.5);
+            margin: 0.75rem; /* Memberikan jarak antar item */
+            flex: 1 1 calc(33.333% - 1.5rem); /* Untuk 3 kolom di desktop dengan jarak */
+            max-width: calc(33.333% - 1.5rem); /* Max width untuk 3 kolom */
+            min-width: 280px; /* Minimum width untuk item individu */
+            box-sizing: border-box; /* Pastikan padding dan border masuk ke dalam lebar */
+        }
+
+        @media (max-width: 900px) { /* Untuk 2 kolom di layar menengah */
+            .website-item {
+                flex: 1 1 calc(50% - 1.5rem);
+                max-width: calc(50% - 1.5rem);
+            }
+        }
+
+        @media (max-width: 600px) { /* Untuk 1 kolom di layar sangat kecil/mobile */
+            .website-item {
+                flex: 1 1 calc(100% - 1.5rem);
+                max-width: calc(100% - 1.5rem);
+            }
+        }
+
+
+        .website-item h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #6a9aff;
+            margin-bottom: 0.75rem;
+            word-break: break-word; /* Memecah kata panjang */
+        }
+
+        .website-item p {
+            font-size: 0.95rem;
+            color: #b0b0c0;
+            margin-bottom: 1rem;
+            word-break: break-word;
+        }
+
+        .website-item a {
+            color: #90d4f4;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 1rem;
+            word-break: break-all; /* Memecah URL panjang */
+        }
+
+        .website-item a:hover {
+            text-decoration: underline;
+        }
+        .website-item .category-tag {
+            font-size: 0.8rem;
+            background-color: #4a506a;
+            color: #e0e0e0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            display: inline-block; /* Agar bisa pakai margin dan padding */
+            margin-bottom: 0.75rem;
+        }
+
+
+        .website-actions {
+            display: flex;
+            justify-content: flex-end; /* Pindahkan tombol ke kanan */
+            gap: 0.75rem;
+            margin-top: 1rem; /* Tambahkan margin atas untuk memisahkan dari konten */
+        }
+
+        .website-actions button {
+            background: none;
+            border: none;
+            color: #b0b0c0;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        .website-actions button:hover {
+            color: #6a9aff;
+        }
+        .website-actions button.delete-btn:hover {
+            color: #ef4444;
+        }
+        .website-actions button.edit-btn:hover {
+            color: #facc15;
+        }
+
+        /* Notifikasi Modal (Sama seperti sebelumnya, disesuaikan tema) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px); /* Efek blur latar belakang */
+        }
+
+        .modal-content {
+            background-color: #1a1a2e;
+            padding: 30px;
+            border: 2px solid #6a9aff;
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(106, 154, 255, 0.7);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            color: #e0e0e0;
+            position: relative;
+            transform: scale(0.9);
+            animation: modalPopIn 0.3s forwards ease-out;
+        }
+
+        @keyframes modalPopIn {
+            to { transform: scale(1); }
+        }
+
+        .close-button {
+            color: #b0b0c0;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #6a9aff;
+          }
+
+       /* Placeholder untuk tidak ada website */
+        .no-websites-message {
+            text-align: center;
+            font-style: italic;
+            color: #b0b0c0;
+            margin-top: 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #6a9aff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none; /* Hidden by default */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay untuk loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Modal Notifikasi -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="modalTitle">Pesan Sistem</h2>
+            <p id="modalMessage">Ini adalah pesan dari aplikasi.</p>
+        </div>
+    </div>
+
+    <!-- Container Utama Aplikasi -->
+    <div id="app" class="app-container">
+        <!-- Tampilan Autentikasi (Login/Register) -->
+        <div id="authView" class="auth-view active">
+            <h1 class="text-3xl lg:text-4xl">Gerbang Arsip</h1>
+            <p class="mb-6 text-center text-gray-400">Masuk atau Daftar untuk mengakses Dimensi Personal Anda.</p>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form">
+                <h2 class="text-2xl mb-6">Login</h2>
+                <input type="text" id="loginUsername" placeholder="Username" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button class="btn btn-primary w-full" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Masuk
+                </button>
+                <p class="auth-toggle">Belum punya akun? <a href="#" id="showRegister">Daftar di sini</a></p>
+            </div>
+
+            <!-- Register Form (hidden by default) -->
+            <div id="registerForm" class="auth-form hidden">
+                <h2 class="text-2xl mb-6">Daftar Akun Baru</h2>
+                <input type="text" id="registerUsername" placeholder="Username" required>
+                <input type="password" id="registerPassword" placeholder="Password" required>
+                <input type="password" id="registerConfirmPassword" placeholder="Konfirmasi Password" required>
+                <button class="btn btn-primary w-full" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> Daftar
+                </button>
+                <p class="auth-toggle">Sudah punya akun? <a href="#" id="showLogin">Login di sini</a></p>
+            </div>
+        </div>
+
+        <!-- Tampilan Dashboard (Website List) -->
+        <div id="dashboardView" class="dashboard-view">
+            <header class="dashboard-header">
+                <div>
+                    <h1 class="text-3xl lg:text-4xl text-left mb-0">Arsip Website Personal</h1>
+                    <p class="user-info mt-2">Selamat datang, <span id="currentUsernameDisplay"></span>!</p>
+                    <p class="user-info text-sm mt-1 text-gray-500">ID Anda: <span id="currentUserIdDisplay" class="font-normal text-xs"></span></p>
+                </div>
+                <button class="btn btn-danger" id="logoutBtn">
+                    <i class="fas fa-power-off"></i> Logout
+                </button>
+            </header>
+
+            <main>
+                <!-- Form untuk menambahkan website baru -->
+                <div class="add-website-form">
+                    <h2 class="text-xl mb-4 text-center">Tambahkan Website Baru</h2>
+                    <input type="text" id="websiteTitle" placeholder="Judul Website (mis: YouTube, GitHub)" required>
+                    <input type="text" id="websiteUrl" placeholder="URL Website (mis: https://www.youtube.com)" required>
+                    <input type="text" id="websiteCategory" placeholder="Kategori (mis: Belajar, Berita, Hiburan)">
+                    <textarea id="websiteDescription" placeholder="Deskripsi Singkat (opsional)" rows="2"></textarea>
+                    <button class="btn btn-primary w-full" id="addWebsiteBtn">
+                        <i class="fas fa-plus-circle"></i> Tambahkan Website
+                    </button>
+                    <button class="btn btn-secondary w-full mt-2 hidden" id="updateWebsiteBtn">
+                        <i class="fas fa-sync-alt"></i> Perbarui Website
+                    </button>
+                </div>
+
+                <!-- Kontrol Filter dan Pencarian -->
+                <div class="filter-search-controls">
+                    <div>
+                        <label for="searchInput" class="sr-only">Cari Website</label>
+                        <input type="text" id="searchInput" placeholder="Cari website...">
+                    </div>
+                    <div>
+                        <label for="categoryFilter" class="sr-only">Filter Kategori</label>
+                        <select id="categoryFilter">
+                            <option value="">Semua Kategori</option>
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Daftar Website yang tersimpan -->
+                <h2 class="text-xl text-center mb-4">Daftar Website Anda</h2>
+                <div id="websiteList" class="website-list">
+                    <!-- Website items will be inserted here by JavaScript -->
+                    <p class="no-websites-message" id="noWebsitesMessage">Anda belum menyimpan website apa pun.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // --- UTILITIES & HELPERS ---
+        // Constants for localStorage keys
+        const USERS_STORAGE_KEY = 'app_users';
+        const CURRENT_USER_STORAGE_KEY = 'app_current_user_id'; // To persist login state
+
+        // Elements
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const authView = document.getElementById('authView');
+        const dashboardView = document.getElementById('dashboardView');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginUsernameInput = document.getElementById('loginUsername');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const registerUsernameInput = document.getElementById('registerUsername');
+        const registerPasswordInput = document.getElementById('registerPassword');
+        const registerConfirmPasswordInput = document.getElementById('registerConfirmPassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const showRegisterLink = document.getElementById('showRegister');
+        const showLoginLink = document.getElementById('showLogin');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const currentUsernameDisplay = document.getElementById('currentUsernameDisplay');
+        const currentUserIdDisplay = document.getElementById('currentUserIdDisplay');
+        const websiteTitleInput = document.getElementById('websiteTitle');
+        const websiteUrlInput = document.getElementById('websiteUrl');
+        const websiteCategoryInput = document.getElementById('websiteCategory'); // New category input
+        const websiteDescriptionInput = document.getElementById('websiteDescription');
+        const addWebsiteBtn = document.getElementById('addWebsiteBtn');
+        const updateWebsiteBtn = document.getElementById('updateWebsiteBtn');
+        const websiteListDiv = document.getElementById('websiteList');
+        const noWebsitesMessage = document.getElementById('noWebsitesMessage');
+        const searchInput = document.getElementById('searchInput'); // New search input
+        const categoryFilter = document.getElementById('categoryFilter'); // New category filter
+
+        // Modal elements
+        const modal = document.getElementById('myModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const closeButton = modal.querySelector('.close-button');
+
+        // Global variables for current user and data
+        let currentUserId = null;
+        let editingWebsiteId = null; // Store ID of website being edited
+
+        // --- MODAL FUNCTIONS ---
+        function showCustomModal(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modal.style.display = 'flex';
+            const currentCloseBtn = modal.querySelector('.close-button');
+            if (currentCloseBtn) {
+                currentCloseBtn.onclick = () => {
+                    modal.style.display = 'none';
+                };
+            }
+        }
+
+        // Close modal when close button is clicked (initial attachment)
+        closeButton.onclick = () => {
+            modal.style.display = 'none';
+        };
+
+        // Close modal when clicking outside the modal content
+        window.onclick = (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // --- LOADING SPINNER FUNCTIONS ---
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+      }
+      // --- AUTHENTICATION FUNCTIONS ---
+
+        // Simple hashing function (for demo purposes only, NOT secure)
+        function hashPassword(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                const char = password.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0; // Convert to 32bit integer
+            }
+            return hash.toString();
+        }
+
+        // Generate a unique ID for users and websites
+        function generateUniqueId() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Get all users from localStorage
+        function getUsers() {
+            const usersJson = localStorage.getItem(USERS_STORAGE_KEY);
+            return usersJson ? JSON.parse(usersJson) : [];
+        }
+
+        // Save users to localStorage
+        function saveUsers(users) {
+            localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+        }
+
+        async function registerUser() {
+            showLoading();
+            const username = registerUsernameInput.value.trim();
+            const password = registerPasswordInput.value;
+            const confirmPassword = registerConfirmPasswordInput.value;
+
+            if (!username || !password || !confirmPassword) {
+                hideLoading();
+                showCustomModal('Registrasi Gagal', 'Semua field harus diisi.');
+                return;
+            }
+            if (password !== confirmPassword) {
+                hideLoading();
+                showCustomModal('Registrasi Gagal', 'Password dan Konfirmasi Password tidak cocok.');
+                return;
+            }
+
+            let users = getUsers();
+            if (users.some(user => user.username === username)) {
+                hideLoading();
+                showCustomModal('Registrasi Gagal', 'Username sudah ada. Pilih username lain.');
+                return;
+            }
+
+            const hashedPassword = hashPassword(password);
+            const newUser = {
+                id: generateUniqueId(),
+                username: username,
+                passwordHash: hashedPassword
+            };
+            users.push(newUser);
+            saveUsers(users);
+
+            hideLoading();
+            showCustomModal('Registrasi Berhasil!', 'Akun Anda berhasil dibuat. Silakan login.');
+            registerUsernameInput.value = '';
+            registerPasswordInput.value = '';
+            registerConfirmPasswordInput.value = '';
+            showLoginForm(); // Show login form after successful registration
+        }
+
+        async function loginUser() {
+            showLoading();
+            const username = loginUsernameInput.value.trim();
+            const password = loginPasswordInput.value;
+
+            if (!username || !password) {
+                hideLoading();
+                showCustomModal('Login Gagal', 'Username dan Password harus diisi.');
+                return;
+            }
+
+            const users = getUsers();
+            const hashedPassword = hashPassword(password);
+            const user = users.find(u => u.username === username && u.passwordHash === hashedPassword);
+
+            if (user) {
+                currentUserId = user.id;
+                localStorage.setItem(CURRENT_USER_STORAGE_KEY, currentUserId); // Persist login
+                localStorage.setItem('current_username', user.username); // Store username for display
+                hideLoading();
+                showCustomModal('Login Berhasil!', `Selamat datang kembali, ${user.username}!`);
+                renderDashboard(user.username, user.id);
+            } else {
+                hideLoading();
+                showCustomModal('Login Gagal', 'Username atau Password salah.');
+            }
+        }
+
+        function logoutUser() {
+            showLoading();
+            currentUserId = null;
+            localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
+            localStorage.removeItem('current_username');
+            hideLoading();
+            showCustomModal('Logout Berhasil', 'Anda telah berhasil logout.');
+            renderAuthForm(); // Show auth form after logout
+        }
+
+        // Controls visibility of auth/dashboard views
+        function renderAuthForm() {
+            authView.style.display = 'flex'; // Make auth view visible
+            dashboardView.style.display = 'none'; // Hide dashboard view
+            showLoginForm(); // Default to showing login form
+            loginUsernameInput.value = '';
+            loginPasswordInput.value = '';
+            registerUsernameInput.value = '';
+            registerPasswordInput.value = '';
+            registerConfirmPasswordInput.value = '';
+        }
+
+        // Shows only the login form within authView
+        function showLoginForm() {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+        }
+
+        // Shows only the register form within authView
+        function showRegisterForm() {
+            registerForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+        }
+
+        // --- DASHBOARD FUNCTIONS ---
+
+        // Get websites for the current user from localStorage
+        function getUserWebsites(userId) {
+            const websitesJson = localStorage.getItem(`app_websites_${userId}`);
+            return websitesJson ? JSON.parse(websitesJson) : [];
+        }
+
+        // Save websites for the current user to localStorage
+        function saveUserWebsites(userId, websites) {
+            localStorage.setItem(`app_websites_${userId}`, JSON.stringify(websites));
+        }
+
+        async function addWebsite() {
+            showLoading();
+            const title = websiteTitleInput.value.trim();
+            const url = websiteUrlInput.value.trim();
+            const category = websiteCategoryInput.value.trim() || 'Tidak Berkategori'; // Default to 'Tidak Berkategori'
+            const description = websiteDescriptionInput.value.trim();
+
+            if (!title || !url) {
+                hideLoading();
+                showCustomModal('Gagal Menambahkan', 'Judul dan URL website harus diisi.');
+                return;
+            }
+            // Basic URL validation: must start with http:// or https://
+            const urlRegex = /^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|[a-zA-Z0-9]+\.[^\s]{2,})$/i;
+            if (!urlRegex.test(url)) {
+                 hideLoading();
+                 showCustomModal('Gagal Menambahkan', 'URL tidak valid. Harap masukkan URL lengkap (contoh: https://www.example.com).');
+                 return;
+            }
+
+
+            let websites = getUserWebsites(currentUserId);
+            if (editingWebsiteId) {
+                // Update existing website
+                const index = websites.findIndex(w => w.id === editingWebsiteId);
+                if (index !== -1) {
+                    websites[index] = { id: editingWebsiteId, title, url, category, description };
+                    showCustomModal('Berhasil Diperbarui', 'Website berhasil diperbarui.');
+                }
+                editingWebsiteId = null;
+                addWebsiteBtn.classList.remove('hidden');
+                updateWebsiteBtn.classList.add('hidden');
+            } else {
+                // Add new website
+                const newWebsite = {
+                    id: generateUniqueId(),
+                    title: title,
+                    url: url,
+                    category: category,
+                    description: description
+                };
+                websites.push(newWebsite);
+                showCustomModal('Berhasil Ditambahkan', 'Website berhasil ditambahkan.');
+            }
+
+            saveUserWebsites(currentUserId, websites);
+            renderWebsiteList();
+            websiteTitleInput.value = '';
+            websiteUrlInput.value = '';
+            websiteCategoryInput.value = ''; // Clear category input
+            websiteDescriptionInput.value = '';
+            hideLoading();
+        }
+
+        async function deleteWebsite(idToDelete) {
+            // Display confirmation in the modal
+            showCustomModal('Konfirmasi Hapus', 'Apakah Anda yakin ingin menghapus website ini?');
+            modal.querySelector('#modalMessage').innerHTML += `<br><br><button class="btn btn-danger mr-2" id="confirmDelete">Ya, Hapus</button><button class="btn btn-secondary" id="cancelDelete">Batal</button>`;
+
+            // Attach event listeners for the confirmation buttons
+            const confirmDeleteBtn = document.getElementById('confirmDelete');
+            const cancelDeleteBtn = document.getElementById('cancelDelete');
+
+            if (confirmDeleteBtn) {
+                confirmDeleteBtn.onclick = () => {
+                    modal.style.display = 'none';
+                    showLoading();
+                    let websites = getUserWebsites(currentUserId);
+                    websites = websites.filter(website => website.id !== idToDelete);
+                    saveUserWebsites(currentUserId, websites);
+                    renderWebsiteList();
+                    showCustomModal('Berhasil Dihapus', 'Website berhasil dihapus.');
+                    hideLoading();
+                };
+            }
+            if (cancelDeleteBtn) {
+                cancelDeleteBtn.onclick = () => {
+                    modal.style.display = 'none';
+                };
+            }
+        }
+
+        function editWebsite(idToEdit) {
+            const websites = getUserWebsites(currentUserId);
+            const websiteToEdit = websites.find(w => w.id === idToEdit);
+
+            if (websiteToEdit) {
+                websiteTitleInput.value = websiteToEdit.title;
+                websiteUrlInput.value = websiteToEdit.url;
+                websiteCategoryInput.value = websiteToEdit.category || ''; // Populate category
+                websiteDescriptionInput.value = websiteToEdit.description || '';
+                editingWebsiteId = idToEdit;
+
+                addWebsiteBtn.classList.add('hidden');
+                updateWebsiteBtn.classList.remove('hidden');
+                showCustomModal('Mode Edit', 'Anda sedang mengedit website. Perbarui detailnya dan klik "Perbarui Website".');
+            }
+        }
+
+        // Function to filter websites based on search query and category
+        function filterWebsites(websites, searchQuery, selectedCategory) {
+            let filtered = websites;
+            const lowerCaseQuery = searchQuery.toLowerCase();
+
+            if (selectedCategory) {
+                filtered = filtered.filter(website =>
+                    website.category && website.category.toLowerCase() === selectedCategory.toLowerCase()
+                );
+            }
+
+            if (lowerCaseQuery) {
+                filtered = filtered.filter(website =>
+                    website.title.toLowerCase().includes(lowerCaseQuery) ||
+                    website.url.toLowerCase().includes(lowerCaseQuery) ||
+                    (website.description && website.description.toLowerCase().includes(lowerCaseQuery)) ||
+                    (website.category && website.category.toLowerCase().includes(lowerCaseQuery))
+                );
+            }
+            return filtered;
+        }
+
+        // Function to populate category filter dropdown
+        function populateCategoryFilter() {
+            const websites = getUserWebsites(currentUserId);
+            const categories = new Set();
+            websites.forEach(website => {
+                if (website.category) {
+                    categories.add(website.category);
+                }
+            });
+
+            // Save current selection before clearing
+            const currentSelectedCategory = categoryFilter.value;
+
+            // Clear current options, keep 'All Categories'
+            categoryFilter.innerHTML = '<option value="">Semua Kategori</option>';
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                categoryFilter.appendChild(option);
+            });
+
+            // Restore selected category if it's still available, otherwise reset
+            if (currentSelectedCategory && Array.from(categories).includes(currentSelectedCategory)) {
+                categoryFilter.value = currentSelectedCategory;
+            } else {
+                categoryFilter.value = ''; // Reset if selected category no longer exists or was empty
+            }
+        }
+
+
+        function renderWebsiteList() {
+            const allWebsites = getUserWebsites(currentUserId);
+            const searchQuery = searchInput.value;
+            const selectedCategory = categoryFilter.value;
+
+            populateCategoryFilter(); // Always re-populate categories to ensure fresh list
+
+            const filteredWebsites = filterWebsites(allWebsites, searchQuery, selectedCategory);
+
+            websiteListDiv.innerHTML = ''; // Clear current list
+
+            if (filteredWebsites.length === 0) {
+                noWebsitesMessage.classList.remove('hidden');
+                websiteListDiv.appendChild(noWebsitesMessage);
+                return;
+            } else {
+                noWebsitesMessage.classList.add('hidden');
+            }
+
+            filteredWebsites.forEach(website => {
+                const websiteItem = document.createElement('div');
+                websiteItem.classList.add('website-item');
+                websiteItem.innerHTML = `
+                    <h3>${website.title}</h3>
+                    <span class="category-tag">${website.category || 'Tidak Berkategori'}</span>
+                    <p>${website.description || 'Tidak ada deskripsi.'}</p>
+                    <a href="${website.url}" target="_blank" rel="noopener noreferrer">${website.url}</a>
+                    <div class="website-actions">
+                        <button class="edit-btn" data-id="${website.id}"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="delete-btn" data-id="${website.id}"><i class="fas fa-trash-alt"></i> Hapus</button>
+                    </div>
+                `;
+                websiteListDiv.appendChild(websiteItem);
+            });
+
+            // Add event listeners to dynamically created buttons
+            websiteListDiv.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    deleteWebsite(event.currentTarget.dataset.id);
+                });
+            });
+            websiteListDiv.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    editWebsite(event.currentTarget.dataset.id);
+                });
+            });
+        }
+
+        // Render Dashboard view
+        function renderDashboard(username, userId) {
+            authView.style.display = 'none'; // Hide auth view when dashboard is active
+            dashboardView.style.display = 'flex'; // Make dashboard view visible
+            currentUsernameDisplay.textContent = username;
+            currentUserIdDisplay.textContent = userId;
+            // Reset search/filter inputs when entering dashboard to show all websites initially
+            searchInput.value = '';
+            categoryFilter.value = '';
+            renderWebsiteList(); // Initial render of websites
+        }
+
+        // --- EVENT LISTENERS ---
+        loginBtn.addEventListener('click', loginUser);
+        registerBtn.addEventListener('click', registerUser);
+        logoutBtn.addEventListener('click', logoutUser);
+        addWebsiteBtn.addEventListener('click', addWebsite);
+        updateWebsiteBtn.addEventListener('click', addWebsite); // Update uses the same logic as add when editingWebsiteId is set
+
+        showRegisterLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showRegisterForm();
+        });
+        showLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showLoginForm();
+        });
+
+        // Event listeners for search and filter
+        searchInput.addEventListener('input', renderWebsiteList);
+        categoryFilter.addEventListener('change', renderWebsiteList);
+
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            showLoading();
+            // Check if a user is already logged in (from previous session)
+            currentUserId = localStorage.getItem(CURRENT_USER_STORAGE_KEY);
+            const savedUsername = localStorage.getItem('current_username');
+
+            if (currentUserId && savedUsername) {
+                renderDashboard(savedUsername, currentUserId);
+                showCustomModal('Selamat Datang Kembali!', `Anda otomatis masuk sebagai ${savedUsername}.`);
+            } else {
+                renderAuthForm(); // Show login/register if no user is logged in
+                showCustomModal('Selamat Datang di Gerbang Arsip', 'Simpan website penting Anda di sini. Ini berjalan sepenuhnya di browser Anda, jadi data Anda *tidak* dikirim ke server mana pun, namun juga *tidak aman* untuk informasi sangat sensitif.');
+            }
+            hideLoading();
+        };
+    </script>
+</body>
+</html>
